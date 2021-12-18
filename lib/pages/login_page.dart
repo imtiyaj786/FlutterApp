@@ -10,68 +10,92 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String name = "";
   bool changeButton = false;
+  final _formKey = GlobalKey<FormState>();
+  moveToHome(BuildContext context) async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        changeButton = true;
+      });
+      await Future.delayed(Duration(seconds: 1));
+      await Navigator.pushNamed(context, MyRoutes.homeRoute);
+      setState(() {
+        changeButton = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(
         color: Colors.white,
         child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Image.asset(
-                "assets/images/login_image.png",
-                fit: BoxFit.cover,
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              Text(
-                "Mohamad $name",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                Image.asset(
+                  "assets/images/hey_email.png",
+                  fit: BoxFit.cover,
                 ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 16.0, horizontal: 32.0),
-                child: Column(
-                  children: [
-                    TextFormField(
-                      decoration: InputDecoration(
-                        hintText: "Enter User name",
-                        labelText: "UserName",
+                SizedBox(
+                  height: 20.0,
+                ),
+                Text(
+                  "Welcome $name",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 16.0, horizontal: 32.0),
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        decoration: InputDecoration(
+                          hintText: "Enter User name",
+                          labelText: "UserName",
+                        ),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "User name can not be empaty";
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          name = value;
+                          setState(() {});
+                        },
                       ),
-                      onChanged: (value) {
-                        name = value;
-                        setState(() {});
-                      },
-                    ),
-                    TextFormField(
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        hintText: "Enter Password",
-                        labelText: "Password",
+                      TextFormField(
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          hintText: "Enter Password",
+                          labelText: "Password",
+                        ),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "Password can not be empaty";
+                          } else if (value.length < 6) {
+                            return "Password length should be atliest six";
+                          }
+                          return null;
+                        },
                       ),
-                    ),
-                    SizedBox(
-                      height: 40.0,
-                    ),
-                    Material(
-                      color: Colors.deepPurple,
-                      borderRadius:
-                          BorderRadius.circular(changeButton ? 50 : 8),
-                      child: InkWell(
+                      SizedBox(
+                        height: 40.0,
+                      ),
+                      Material(
+                        color: Colors.deepPurple,
+                        borderRadius:
+                            BorderRadius.circular(changeButton ? 50 : 8),
+                        child: InkWell(
                           // splashColor: Colors.yellow,
-                          onTap: () async {
-                            setState(() {
-                              changeButton = true;
-                            });
-                            await Future.delayed(Duration(seconds: 1));
-                            Navigator.pushNamed(context, MyRoutes.homeRoute);
-                          },
+                          onTap: () => moveToHome(context),
                           child: AnimatedContainer(
                             duration: Duration(seconds: 1),
                             width: changeButton ? 50 : 150,
@@ -89,22 +113,14 @@ class _LoginPageState extends State<LoginPage> {
                                         fontWeight: FontWeight.bold,
                                         fontSize: 18),
                                   ),
-                          )),
-                    ),
-
-                    // ),
-
-                    // ElevatedButton(
-                    //   onPressed: () {
-                    //     Navigator.pushNamed(context, MyRoutes.homeRoute);
-                    //   },
-                    //   child: Text("Login"),
-                    //   style: TextButton.styleFrom(minimumSize: Size(150, 40)),
-                    // ),
-                  ],
-                ),
-              )
-            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
         ));
   }
